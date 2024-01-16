@@ -10,6 +10,7 @@ const lskAddress = "secret1d3upraxjwv0d30aahm7j8pu2a2p7g9lhe72ch3";
 
 var accounts = '';
 var scrtAddress = '';
+var isConnected = false;
 
 async function connectWallet() {
     if (window.keplr) {
@@ -20,14 +21,16 @@ async function connectWallet() {
         console.log("Using Leap");
     }else {
         console.log("No wallet detected");
-      document.getElementById('scrtAddress').innerText = "No wallet detected";
+      document.getElementById('walletAddress').innerText = "No wallet detected";
     }
-  
-  await window.wallet.enable(CHAIN_ID);
-  const walletOfflineSigner = window.wallet.getOfflineSignerOnlyAmino(CHAIN_ID);
-  accounts = await walletOfflineSigner.getAccounts();
-  scrtAddress = accounts[0].address;
-  document.getElementById('scrtAddress').innerText = scrtAddress;
+        await window.wallet.enable(CHAIN_ID);
+        const offlineSigner = window.wallet.getOfflineSigner(CHAIN_ID);
+        const accounts = await offlineSigner.getAccounts();
+        scrtAddress = accounts[0].address;
+        isConnected = true;
+
+        document.getElementById('scrtAddress').innerText = scrtAddress;
+        document.getElementById('tokensBtn').removeAttribute('disabled');
 }
 
 function img_create(src) {
@@ -105,7 +108,8 @@ async function getTokens(){
   }
 }
 
+
 window.onload = async () => {
-  document.getElementById("connectBtn").onclick=connectWallet;
-  document.getElementById("tokensBtn").onclick=getTokens;
+    document.getElementById("tokensBtn").onclick=getTokens;
+    connectWallet();
 };
