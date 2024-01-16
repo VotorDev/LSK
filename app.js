@@ -1,6 +1,6 @@
 import { SecretNetworkClient } from "https://esm.sh/secretjs";
 
-const page_version = "0.2";
+const page_version = "0.3";
 
 const CHAIN_ID = "secret-4";
 
