@@ -39,7 +39,7 @@ async function connectWallet() {
 }
 
 function img_create(src) {
-    var img = IEWIN ? new Image() : document.createElement('img');
+    var img = new Image();
     img.src = src;
     img.style.width = "640px";
     img.style.height = "auto";
