@@ -53,11 +53,9 @@ async function getTokenInfo(token_id, client, contract, auth){
     token_id: token_id
   })
 
-  document.getElementById('tokenInfo').innerText = `tokens: ${tokens['token_list']['tokens']}`
-  console.log(tokenInfo);
   let tokenImg = img_create(tokenInfo['all_nft_info']['info']['extension']['media'][0]['url']);
   
-  document.getElementById('tokenInfo').appendChild(tokenImg);
+  document.getElementById('kongs').appendChild(tokenImg);
 }
 
 async function getTokens(){
@@ -107,6 +105,7 @@ async function getTokens(){
   });
   console.log(tokens);
   console.log(tokens['token_list']['tokens']);
+  document.getElementById('tokens').innerText = `tokens: ${tokens['token_list']['tokens']}`
   
   for (let token_id of tokens['token_list']['tokens'][0]) {
     await getTokenInfo(token_id, secretjs, lskContract, lskAuth);
