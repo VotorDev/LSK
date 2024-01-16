@@ -46,8 +46,8 @@ function img_create(src) {
     return img;
 }
 
-async function getTokenInfo(token_id, contract, auth){
-  let tokenInfo = await secretjs.query.snip721.GetTokenInfo({
+async function getTokenInfo(token_id, client, contract, auth){
+  let tokenInfo = await client.query.snip721.GetTokenInfo({
     contract: contract,
     auth: auth,
     token_id: token_id
@@ -109,7 +109,7 @@ async function getTokens(){
   console.log(tokens['token_list']['tokens']);
   
   for (let token_id of tokens['token_list']['tokens'][0]) {
-    await getTokenInfo(token_id, lskContract, lskAuth);
+    await getTokenInfo(token_id, secretjs, lskContract, lskAuth);
   }
 }
 
