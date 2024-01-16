@@ -29,6 +29,28 @@ async function connectWallet(){
   document.getElementById('scrtAddress').innerText = scrtAddress;
 }
 
+function img_create(src) {
+    var img = IEWIN ? new Image() : document.createElement('img');
+    img.src = src;
+    img.style.width = "640px";
+    img.style.height = "auto";
+    return img;
+}
+
+async function getTokenInfo(token_id, contract, auth){
+  let tokenInfo = await secretjs.query.snip721.GetTokenInfo({
+    contract: contract,
+    auth: auth,
+    token_id: token_id
+  })
+
+  document.getElementById('tokenInfo').innerText = `tokens: ${tokens['token_list']['tokens']}`
+  console.log(tokenInfo);
+  let tokenImg = img_create(tokenInfo['all_nft_info']['info']['extension']['media'][0]['url']);
+  
+  document.getElementById('tokenInfo').appendChild(tokenImg);
+}
+
 async function getTokens(){
   const url = "https://lcd.secret.express";
 
@@ -77,17 +99,9 @@ async function getTokens(){
   console.log(tokens);
   console.log(tokens['token_list']['tokens']);
   
-  let tokenInfo = await secretjs.query.snip721.GetTokenInfo({
-    contract: lskContract,
-    auth: lskAuth,
-    token_id: tokens['token_list']['tokens'][0]
-  })
-
-  document.getElementById('tokenInfo').innerText = `tokens: ${tokens['token_list']['tokens']}`
-  console.log(tokenInfo);
-  let tokenImg = tokenInfo['all_nft_info']['info']['extension']['media'][0]['url'];
-  document.getElementById('tokenInfo').innerHTML = 
-    `<img src="${tokenImg}">`
+  for (let token_id of tokens['token_list']['tokens'][0]) {
+    await getTokenInfo(token_id, lskContract, lskAuth);
+  }
 }
 
 window.onload = async () => {
