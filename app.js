@@ -1,0 +1,96 @@
+import { SecretNetworkClient } from "https://esm.sh/secretjs";
+
+const CHAIN_ID = "secret-4";
+
+const sScrtCodeHash = "af74387e276be8874f07bec3a87023ee49b0e7ebe08178c49d0a49c3c98ed60e";
+
+const lskCodeHash = "4dd433b8d9c234c33f27bcd14f3348bc57d96440a92b77cee7d0c925b8eed58e";
+
+const lskAddress = "secret1d3upraxjwv0d30aahm7j8pu2a2p7g9lhe72ch3";
+
+var accounts = '';
+var scrtAddress = '';
+
+async function connectWallet(){
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  while (
+    !window.keplr ||
+    !window.getEnigmaUtils ||
+    !window.getOfflineSignerOnlyAmino
+  ) {
+    await sleep(50);
+  }
+  window.wallet = window.keplr;
+  await window.wallet.enable(CHAIN_ID);
+  const walletOfflineSigner = window.wallet.getOfflineSignerOnlyAmino(CHAIN_ID);
+  accounts = await walletOfflineSigner.getAccounts();
+  scrtAddress = accounts[0].address;
+  document.getElementById('scrtAddress').innerText = scrtAddress;
+}
+
+async function getTokens(){
+  const url = "https://lcd.secret.express";
+
+  // To create a readonly secret.js client, just pass in a LCD endpoint
+  const secretjs = new SecretNetworkClient({
+    url,
+    chainId: CHAIN_ID,
+    wallet: window.wallet,
+    walletAddress: scrtAddress,
+    encryptionUtils: window.wallet.getEnigmaUtils(CHAIN_ID),
+  });
+
+  const {
+    balance: { amount },
+  } = await secretjs.query.bank.balance(
+    {
+      address: scrtAddress,
+      denom: "uscrt",
+    },
+  );
+
+  console.log(`I have ${Number(amount) / 1e6} SCRT!`);
+
+  let permit = await secretjs.utils.accessControl.permit.sign(
+    scrtAddress,
+    CHAIN_ID,
+    "LSK-migration",
+    [lskAddress],
+    ["owner"]
+  )
+
+  let lskContract = {
+      address: lskAddress,
+      codeHash: lskCodeHash
+    };
+  
+  let lskAuth = {
+      permit: permit
+    };
+  
+  let tokens = await secretjs.query.snip721.GetOwnedTokens({
+    contract: lskContract,
+    owner: scrtAddress,
+    auth: lskAuth,
+  });
+  console.log(tokens);
+  console.log(tokens['token_list']['tokens']);
+  
+  let tokenInfo = await secretjs.query.snip721.GetTokenInfo({
+    contract: lskContract,
+    auth: lskAuth,
+    token_id: tokens['token_list']['tokens'][0]
+  })
+
+  document.getElementById('tokenInfo').innerText = `tokens: ${tokens['token_list']['tokens']}`
+  console.log(tokenInfo);
+  let tokenImg = tokenInfo['all_nft_info']['info']['extension']['media'][0]['url'];
+  document.getElementById('tokenInfo').innerHTML = 
+    `<img src="${tokenImg}">`
+}
+
+window.onload = async () => {
+  document.getElementById("connectBtn").onclick=connectWallet;
+  document.getElementById("tokensBtn").onclick=getTokens;
+};
