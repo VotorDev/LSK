@@ -11,17 +11,18 @@ const lskAddress = "secret1d3upraxjwv0d30aahm7j8pu2a2p7g9lhe72ch3";
 var accounts = '';
 var scrtAddress = '';
 
-async function connectWallet(){
-  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-  while (
-    !window.keplr ||
-    !window.getEnigmaUtils ||
-    !window.getOfflineSignerOnlyAmino
-  ) {
-    await sleep(50);
-  }
-  window.wallet = window.keplr;
+async function connectWallet() {
+    if (window.keplr) {
+        window.wallet = window.keplr;
+        console.log("Using Keplr");
+    } else if(window.leap){
+        window.wallet = window.leap;
+        console.log("Using Leap");
+    }else {
+        console.log("No wallet detected");
+      document.getElementById('scrtAddress').innerText = "No wallet detected";
+    }
+  
   await window.wallet.enable(CHAIN_ID);
   const walletOfflineSigner = window.wallet.getOfflineSignerOnlyAmino(CHAIN_ID);
   accounts = await walletOfflineSigner.getAccounts();
