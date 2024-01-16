@@ -1,5 +1,7 @@
 import { SecretNetworkClient } from "https://esm.sh/secretjs";
 
+const page_version = "0.1";
+
 const CHAIN_ID = "secret-4";
 
 const sScrtCodeHash = "af74387e276be8874f07bec3a87023ee49b0e7ebe08178c49d0a49c3c98ed60e";
@@ -8,9 +10,12 @@ const lskCodeHash = "4dd433b8d9c234c33f27bcd14f3348bc57d96440a92b77cee7d0c925b8e
 
 const lskAddress = "secret1d3upraxjwv0d30aahm7j8pu2a2p7g9lhe72ch3";
 
-var accounts = '';
-var scrtAddress = '';
-var isConnected = false;
+let scrtAddress = '';
+let isConnected = false;
+
+function setVersion() {
+  document.getElementById('version').innerText = `Version: ${page_version}`;
+}
 
 async function connectWallet() {
     if (window.keplr) {
@@ -108,8 +113,8 @@ async function getTokens(){
   }
 }
 
-
 window.onload = async () => {
+    setVersion();
     document.getElementById("tokensBtn").onclick=getTokens;
     connectWallet();
 };
