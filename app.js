@@ -1,6 +1,6 @@
 import { SecretNetworkClient } from "https://esm.sh/secretjs";
 
-const page_version = "0.3";
+const page_version = "0.4";
 
 const CHAIN_ID = "secret-4";
 
@@ -105,7 +105,7 @@ async function getTokens(){
   console.log(tokens['token_list']['tokens']);
   document.getElementById('tokens').innerText = `tokens: ${tokens['token_list']['tokens']}`
   
-  for (let token_id of tokens['token_list']['tokens'][0]) {
+  for (let token_id of tokens['token_list']['tokens']) {
     await getTokenInfo(token_id, secretjs, lskContract, lskAuth);
   }
 }
