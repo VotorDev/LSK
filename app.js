@@ -40,6 +40,7 @@ async function connectWallet() {
 
 function img_create(src) {
     const img = new Image(480);
+    img.style='background-image:url("assets/spinner.gif")'
     img.src = src;
     return img;
 }
