@@ -57,7 +57,7 @@ async function getTokenInfo(token_id, client, contract, auth){
 }
 
 async function getTokens(){
-  const url = "https://lcd.secret.express";
+  const url = "https://secretnetwork-api.lavenderfive.com:443";
 
   // To create a readonly secret.js client, just pass in a LCD endpoint
   const secretjs = new SecretNetworkClient({
